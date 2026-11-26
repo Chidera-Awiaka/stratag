@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from './lib/store.js';
 
 // One-tap feedback straight into the Supabase `feedback` table (insert-only for everyone).
-export function Feedback({ session, onClose, say }) {
+export function Feedback({ session, onClose, say, initialMood = null }) {
   const [msg, setMsg] = useState('');
-  const [mood, setMood] = useState(null);
+  const [mood, setMood] = useState(initialMood);
   const [email, setEmail] = useState(session?.user?.email || '');
   const [busy, setBusy] = useState(false);
   useEffect(() => { const k = (e) => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k); }, []);

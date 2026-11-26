@@ -1,7 +1,10 @@
 import { createRoot } from 'react-dom/client';
+import { lazy, Suspense } from 'react';
 import App from './App.jsx';
 import './styles.css';
 import { inject } from '@vercel/analytics';
 if (import.meta.env.PROD) inject();
-createRoot(document.getElementById('root')).render(<App />);
+const Admin = lazy(() => import('./Admin.jsx'));
+const isAdmin = location.pathname.replace(/\/$/, '') === '/admin';
+createRoot(document.getElementById('root')).render(isAdmin ? <Suspense fallback={null}><Admin /></Suspense> : <App />);
 if ('serviceWorker' in navigator && import.meta.env.PROD) navigator.serviceWorker.register('/sw.js').catch(() => {});

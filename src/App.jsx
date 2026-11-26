@@ -228,6 +228,7 @@ export default function App() {
               {views.map(([k, l]) => <button key={k} role="tab" aria-selected={view === k} onClick={() => setView(k)}>{l}</button>)}
             </div>
 
+            {view === 'today' && <AskFeedback hasPlan={items.some((i) => courseById[i.courseId] && !courseById[i.courseId].sample)} open={setFb} />}
             {view === 'today' && (
               <Today steps={steps} items={visItems} isDone={isDone} toggle={toggle} skip={skip} moveTo={moveTo} itemById={itemById} courseById={courseById} firstStep={firstStep} jump={jumpToWeekOf} upsert={upsertItem} />
             )}
@@ -262,7 +263,7 @@ export default function App() {
         />
       )}
       {lms && <LmsSheet courses={courses} onClose={() => setLms(false)} onImport={importFeed} />}
-      {fb && <Feedback session={session} onClose={() => setFb(false)} say={say} />}
+      {fb && <Feedback session={session} onClose={() => setFb(false)} say={say} initialMood={typeof fb === 'string' ? fb : null} />}
       {toast && (
         <div className="toast" role="status">
           <span>{toast.msg}</span>
@@ -290,6 +291,27 @@ function Welcome({ onStart, onSample, onLms }) {
         <li><b>3</b> Tick off one small step a day</li>
       </ol>
     </section>
+  );
+}
+
+// A quiet check-in: after a few days of real use, ask once how it's going (then not again for 3 weeks).
+const ASK_KEY = 'stratag.fbAsk';
+function askState() { try { return JSON.parse(localStorage.getItem(ASK_KEY)) || {}; } catch { return {}; } }
+function AskFeedback({ hasPlan, open }) {
+  const [st, setSt] = useState(askState);
+  const save = (x) => { const n = { ...st, ...x }; setSt(n); try { localStorage.setItem(ASK_KEY, JSON.stringify(n)); } catch {} };
+  useEffect(() => { if (hasPlan && !st.first) save({ first: Date.now() }); }, [hasPlan]);
+  const DAY = 864e5;
+  if (!hasPlan || !st.first || Date.now() - st.first < 3 * DAY || (st.last && Date.now() - st.last < 21 * DAY)) return null;
+  const pick = (m) => { save({ last: Date.now() }); open(m); };
+  return (
+    <aside className="ask" aria-label="Quick question">
+      <p><b>Quick one:</b> how's StratAG treating you so far? Your answer shapes what we fix next.</p>
+      <div className="moods">
+        {[['love', 'Love it'], ['ok', "It's fine"], ['meh', 'Annoying'], ['broken', 'Something broke']].map(([k, l]) => <button key={k} onClick={() => pick(k)}>{l}</button>)}
+        <button className="link" onClick={() => save({ last: Date.now() })}>Not now</button>
+      </div>
+    </aside>
   );
 }
 
