@@ -29,6 +29,7 @@ export default function Admin() {
   const [theme, setTheme] = useState(null);
   const [q, setQ] = useState('');
   const [showDone, setShowDone] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(null);
 
   useEffect(() => {
     document.title = `Feedback · ${APP_NAME}`;
@@ -43,6 +44,8 @@ export default function Admin() {
     const { data, error } = await supabase.from('feedback').select('*').order('created_at', { ascending: false }).limit(2000);
     if (error) { setErr(error.message); setRows([]); return; }
     setRows(data.map((r) => ({ ...r, themes: themesOf(r) })));
+    const a = await supabase.from('admins').select('user_id').eq('user_id', session.user.id).maybeSingle();
+    setIsAdmin(!a.error && !!a.data);
   };
   useEffect(() => { if (session) load(); }, [session?.user?.id]);
 
@@ -87,7 +90,9 @@ export default function Admin() {
       <p className="sub">Signed in as {session.user.email} · <a href="/">Back to {APP_NAME}</a></p>
       {err && <p className="err">{err}</p>}
       {rows && rows.length === 0 && !err && (
-        <p className="sub">No feedback yet, or your account isn't on the admin list. If students have sent some, run <code>supabase/feedback.sql</code> with your email in the last line.</p>
+        isAdmin === false
+          ? <p className="sub">This account isn't on the admin list yet. Run <code>supabase/feedback.sql</code> in Supabase with this email on the last line, then refresh.</p>
+          : <p className="sub">You're all set as an admin. No feedback has come in yet. When students send some, it shows up here grouped by theme. (Try it: send yourself a message with "Send feedback" on <a href="/">{APP_NAME}</a>, then refresh.)</p>
       )}
       {rows && rows.length > 0 && (
         <>
