@@ -15,7 +15,7 @@ const reDayMonth = new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MON
 const reSlash = /\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/;
 const reWeek = /\bweek\s*(\d{1,2})\b/i;
 const reDow = /\b(sun(?:day)?|mon(?:day)?|tue(?:s(?:day)?)?|wed(?:nesday)?|thu(?:r(?:s(?:day)?)?)?|fri(?:day)?|sat(?:urday)?)\b\.?/i;
-const reTime = /\b(\d{1,2})(?::(\d{2}))?\s*([ap])\.?m\.?\b|\b(\d{1,2}):(\d{2})\b/i;
+const reTime = /\b(\d{1,2})(?::(\d{2}))?(?::\d{2})?\s*([ap])\.?m\.?\b|\b(\d{1,2}):(\d{2})\b/i;
 const reWeight = /(\d{1,3}(?:\.\d+)?)\s*%/;
 
 // lines that mention a date but are not work
@@ -165,7 +165,47 @@ function dowMismatch(line, f) {
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
+// D2L / Brightspace "Instructional Plan" printouts (Conestoga and others): every graded item is a block
+// like "Assignment 1 (15%)" followed by a start and a due date-time ("9/14/2026, 12:01:00 AM").
+// The weekly schedule repeats the same items with "Start Date:" / "Due Date:" labels.
+const reDT = /\b(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*([AP])M\b/gi;
+const dtOf = (m) => ({ due: `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}`, time: String(+m[4] % 12 + (m[6].toUpperCase() === 'P' ? 12 : 0)).padStart(2, '0') + ':' + m[5] });
+export function parseD2lPlan(text, courseId = null) {
+  const a = text.search(/^Evaluation Summary\s*$/m);
+  if (a < 0 || !/Instructional Plan|Course Schedule/i.test(text)) return null;
+  const b = text.indexOf('Course Schedule', a);
+  const lines = text.slice(a, b > a ? b : undefined).split(/\r?\n/).map((l) => l.trim());
+  const sched = b > a ? text.slice(b).split(/\r?\n/).map((l) => l.trim()) : [];
+  const head = /^(.{2,120}?)\s*\((\d{1,3}(?:\.\d+)?)\s*%\)$/;
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    const h = lines[i].match(head);
+    if (!h) continue;
+    const title = h[1].trim();
+    const block = [];
+    for (let j = i + 1; j < lines.length && !head.test(lines[j]); j++) block.push(lines[j]);
+    const dts = [...block.join('\n').matchAll(reDT)];
+    let when = dts.length ? dtOf(dts[dts.length - 1]) : null;
+    if (!when) {
+      // not in the summary (e.g. a test set up in Grades): look for it in the weekly schedule
+      for (let k = 0; k < sched.length && !when; k++) {
+        if (!sched[k].toLowerCase().startsWith(title.toLowerCase()) || /^week\s+\d/i.test(sched[k])) continue;
+        let e = k + 1; while (e < sched.length && /^(Start|Due|End) Date:/i.test(sched[e])) e++;
+        const near = sched.slice(k + 1, e).join('\n');
+        const m = near.match(/(?:Due|End) Date:\s*([^\n]+)/i) || near.match(/Start Date:\s*([^\n]+)/i);
+        const d = m && [...m[1].matchAll(reDT)][0];
+        if (d) when = dtOf(d);
+      }
+    }
+    const type = TYPES.find((t) => t.re.test(title)) || (/in-?class|practical/i.test(title) && TYPES.find((t) => t.k === 'quiz')) || TYPES[TYPES.length - 1];
+    out.push({ id: uid(), courseId, title, type: type.k, weight: +(+h[2]).toFixed(1), due: when ? when.due : null, time: when ? when.time : null, guessed: false, exact: !!when, ...(when ? {} : { tba: true }) });
+  }
+  return out.length ? out.sort((x, y) => (x.due || '9999').localeCompare(y.due || '9999')) : null;
+}
+
 export function parseSyllabus(text, { courseId = null, termStart = null } = {}) {
+  const d2l = parseD2lPlan(text, courseId);
+  if (d2l) return d2l;
   const out = [];
   const lines = text.split(/\r?\n/);
   const sl = [...text.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)];

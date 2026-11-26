@@ -1,0 +1,177 @@
+Instructional Plan - ABCD12345
+Evaluation Summary
+Assignment 1 (15%)
+Course Tools > Assignments
+Assignment 1
+9/14/2026, 12:01:00 AM
+10/9/2026, 11:00:00 PM
+Assignment 2 (15%)
+Course Tools > Assignments
+Assignment 2
+9/28/2026, 12:01:00 AM
+10/23/2026, 11:00:00 PM
+Assignment 3 (15%)
+Course Tools > Assignments
+Assignment 3
+11/2/2026, 12:01:00 AM
+11/20/2026, 11:00:00 PM
+InClass 1 (10%)
+Course Tools > Assignments
+InClass 1
+11/23/2026, 12:00:00 PM
+11/23/2026, 3:00:00 PM
+InClass 2 (10%)
+Course Tools > Assignments
+The link for | InClass 2 is not active yet.
+11/30/2026, 12:00:00 PM
+11/30/2026, 3:00:00 PM
+Term Test (10%)
+11/25/26, 8:05 PM | Instructional Plan
+Course Tools > Grades
+Term Test
+Contact your Instructor for more information about this item.
+Project (25%)
+Course Tools > Assignments
+Project
+11/16/2026, 12:01:00 AM
+12/11/2026, 11:00:00 PM
+Course Schedule
+Week 1: Introduction
+9/7/2026, 12:00:00 AM
+9/13/2026, 11:59:59 PM
+Synchronous - In Person
+Introduction and Concepts
+Unit Outcomes:
+Week 1: Introduction
+Week 2: Concepts
+9/14/2026, 12:00:00 AM
+9/20/2026, 11:59:59 PM
+Synchronous - In Person
+Concepts (2) and Cryptography
+11/25/26, 8:05 PM | Instructional Plan
+Week 2: Concepts
+Unit Outcomes:
+Week 2: Concepts
+Week 3: Secure software design
+9/21/2026, 12:00:00 AM
+9/27/2026, 11:59:59 PM
+Synchronous - In Person
+Cryptography (2)
+Unit Outcomes:
+Week 3: Secure software design
+Week 4: Secure software design (2)
+9/28/2026, 12:00:00 AM
+10/4/2026, 11:59:59 PM
+Synchronous - In Person
+Secure software design
+11/25/26, 8:05 PM | Instructional Plan
+Week 4: Secure software design (2)
+Unit Outcomes:
+Week 4: Secure software design (2)
+Week 5: Cryptography
+10/5/2026, 12:00:00 AM
+10/11/2026, 11:59:59 PM
+Synchronous - In Person
+Secure software design
+Unit Outcomes:
+Week 5: Cryptography
+Assignment 1 (15%)
+Start Date: 9/14/2026, 12:01:00 AM
+Due Date: 10/9/2026, 11:00:00 PM
+Week 6: Cryptography (2)
+10/12/2026, 12:00:00 AM
+10/18/2026, 11:59:59 PM
+Synchronous - In Person
+11/25/26, 8:05 PM | Instructional Plan
+Week 6: Cryptography (2)
+[Add in a description of this week's content here.]
+Week 6: Cryptography (2)
+Week 7: Term Test
+10/19/2026, 12:00:00 AM
+10/25/2026, 11:59:59 PM
+Synchronous - In Person
+Term Test & InClass 2
+Week 7: Term Test
+Term Test F2026- Requires Respondus LockDown Browser
+Start Date: 10/19/2026, 12:00:00 PM
+End Date: 10/19/2026, 11:59:59 PM
+Assignment 2 (15%)
+Start Date: 9/28/2026, 12:01:00 AM
+Due Date: 10/23/2026, 11:00:00 PM
+Week 8: Student Success Week
+10/26/2026, 12:00:00 AM
+11/1/2026, 11:59:59 PM
+No Delivery
+[Add in a description of this week's content here.]
+Week 8: Student Success Week
+Week 9: Vulnerability Classes
+11/2/2026, 12:00:00 AM
+11/25/26, 8:05 PM | Instructional Plan
+Week 9: Vulnerability Classes
+11/8/2026, 11:59:59 PM
+Synchronous - In Person
+Vulnerability Classes
+Unit Outcomes:
+Week 9: Vulnerability Classes
+Week 10: Vulnerability Classes (2)
+11/9/2026, 12:00:00 AM
+11/15/2026, 11:59:59 PM
+Synchronous - In Person
+Vulnerability Classes
+Unit Outcomes:
+Week 10: Vulnerability Classes (2)
+Week 11: Finding Vulnerabilities
+11/16/2026, 12:00:00 AM
+11/22/2026, 11:59:59 PM
+Synchronous - In Person
+Finding vulnerabilities and InClass 2 - source code analysis
+11/25/26, 8:05 PM | Instructional Plan
+Week 11: Finding Vulnerabilities
+Unit Outcomes:
+tools to find flaws and vulnerabilities.
+Week 11: Finding Vulnerabilities
+Assignment 3 (15%)
+Start Date: 11/2/2026, 12:01:00 AM
+Due Date: 11/20/2026, 11:00:00 PM
+Week 12: Practical #1
+11/23/2026, 12:00:00 AM
+11/29/2026, 11:59:59 PM
+Synchronous - In Person
+Finding vulnerabilities and InClass 3 - network based vulnerability scanning
+Unit Outcomes:
+tools to find flaws and vulnerabilities.
+Week 12: Practical #1
+InClass 1 (10%)
+Start Date: 11/23/2026, 12:00:00 PM
+Due Date: 11/23/2026, 3:00:00 PM
+Week 13: Practical #2
+11/30/2026, 12:00:00 AM
+12/6/2026, 11:59:59 PM
+Synchronous - In Person
+11/25/26, 8:05 PM | Instructional Plan
+Week 13: Practical #2
+Finding vulnerabilities and InClass 4 - fuzzing and active exploitation
+Unit Outcomes:
+tools to find flaws and vulnerabilities.
+Week 13: Practical #2
+InClass 2 (10%)
+Start Date: 11/30/2026, 12:00:00 PM
+Due Date: 11/30/2026, 3:00:00 PM
+Week 14: Reporting and Mitigation
+12/7/2026, 12:00:00 AM
+12/13/2026, 11:59:59 PM
+Synchronous - In Person
+Reporting and planning for mitigation
+Unit Outcomes:
+Week 14: Reporting and Mitigation
+Project (25%)
+Start Date: 11/16/2026, 12:01:00 AM
+Due Date: 12/11/2026, 11:00:00 PM
+Week 15: No Exam
+12/14/2026, 12:00:00 AM
+12/20/2026, 11:59:59 PM
+No Delivery
+11/25/26, 8:05 PM | Instructional Plan
+Week 15: No Exam
+[Add in a description of this week's content here.]
+Week 15: No Exam

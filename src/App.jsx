@@ -585,7 +585,7 @@ function ImportSheet({ course, usedInks, termStart: ts0, onClose, onDone }) {
     const r = parseSyllabus(text, { termStart });
     // anything far outside the term is probably misread (e.g. 10/02 read as Oct 2)
     const lo = iso(addDays(fromIso(termStart), -21)), hi = iso(addDays(fromIso(termStart), 150));
-    setFound(r.map((i) => (i.due && (i.due < lo || i.due > hi) ? { ...i, guessed: true } : i)));
+    setFound(r.map((i) => (i.due && !i.exact && (i.due < lo || i.due > hi) ? { ...i, guessed: true } : i)));
     if (!name.trim()) setName(guessCourse(text) || 'My course');
   };
 
@@ -657,7 +657,7 @@ function ImportSheet({ course, usedInks, termStart: ts0, onClose, onDone }) {
 }
 
 function guessCourse(s) {
-  const m = (s || '').match(/\b([A-Z]{2,5})[\s-]?(\d{3,4}[A-Z]?)\b/);
+  const m = (s || '').match(/\b([A-Z]{2,5})[\s-]?(\d{3,5}[A-Z]?)\b/);
   return m ? `${m[1]} ${m[2]}` : '';
 }
 
