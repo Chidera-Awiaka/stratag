@@ -115,12 +115,10 @@ export default function App() {
           ))}
           <button className="tab add" onClick={() => setSheet({})}>+ Add a syllabus</button>
         </nav>
-        {!empty && (
-          <div className="spine-foot">
-            <button className="link" onClick={exportIcs}>Export to calendar (.ics)</button>
-            <Account session={session} sync={sync} say={say} />
-          </div>
-        )}
+        <div className="spine-foot">
+          {!empty && <button className="link" onClick={exportIcs}>Export to calendar (.ics)</button>}
+          <Account session={session} sync={sync} say={say} label={empty ? 'Already use StratAG? Sign in' : 'Sync to your phone'} />
+        </div>
       </aside>
 
       <main className="page">
@@ -407,7 +405,7 @@ function guessCourse(s) {
   return m ? `${m[1]} ${m[2]}` : '';
 }
 
-function Account({ session, sync, say }) {
+function Account({ session, sync, say, label }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
@@ -427,8 +425,8 @@ function Account({ session, sync, say }) {
   };
   return (
     <div className="acct">
-      <p className="saved">Saved on this device only</p>
-      {!open ? <button className="link" onClick={() => setOpen(true)}>Sync to your phone</button> : sent ? (
+      {label === 'Sync to your phone' && <p className="saved">Saved on this device only</p>}
+      {!open ? <button className="link" onClick={() => setOpen(true)}>{label}</button> : sent ? (
         <p className="saved">Check {email} for a sign-in link.</p>
       ) : (
         <form onSubmit={send} className="mini">
