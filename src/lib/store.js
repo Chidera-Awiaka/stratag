@@ -35,6 +35,7 @@ export function merge(a, b) {
     items: mergeList(a.items, b.items),
     done: mergeDone(a.done, b.done),
     moves: mergeDone(a.moves, b.moves),
+    feeds: mergeDone(a.feeds, b.feeds),
     termStart: (a.termStartT || 0) >= (b.termStartT || 0) ? a.termStart : b.termStart,
     termStartT: Math.max(a.termStartT || 0, b.termStartT || 0),
   };

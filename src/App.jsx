@@ -5,6 +5,8 @@ import { buildIcs } from './lib/ics.js';
 import { loadLocal, saveLocal, merge, pull, push, supabase } from './lib/store.js';
 import { sampleSyllabus } from './sample.js';
 import { APP_NAME, MAKER, TAGLINE, MAKER_URL } from './config.js';
+import { LmsSheet, applyFeed, fetchFeed } from './Lms.jsx';
+import { Feedback } from './Feedback.jsx';
 
 // Course inks are stored as hex (synced data); on screen each maps to a CSS variable
 // so dark mode can swap in lighter, readable versions.
@@ -14,6 +16,7 @@ const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const uid = () => Math.random().toString(36).slice(2, 10);
 const now = () => Date.now();
 const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999');
+const nextInk = (used) => INKS.find((c) => !used.includes(c)) || INKS[used.length % INKS.length];
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 export default function App() {
@@ -25,6 +28,8 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [sync, setSync] = useState('local'); // local | syncing | synced | error
   const [toast, setToast] = useState(null); // {msg, undo?}
+  const [lms, setLms] = useState(false);
+  const [fb, setFb] = useState(false);
   const pushTimer = useRef();
   const pulled = useRef(false);
 
@@ -115,6 +120,22 @@ export default function App() {
     if (!course.sample) say(`${plural(newItems.length, 'deadline')} planned for ${course.name}`);
   };
 
+  const importFeed = (url, rows) => {
+    let res;
+    setState((s) => { res = applyFeed(s, url, rows, { addNew: () => true, nextInk, uid }); return res.state; });
+    setLms(false); setFilter(null); setView('today'); setWeekOffset(0);
+    setTimeout(() => res && say(`${plural(res.added, 'date')} added from your calendar. We'll keep it updated.`), 0);
+  };
+  // re-read connected LEARN / D2L feeds at most every 6 hours
+  useEffect(() => {
+    const feeds = Object.entries(state.feeds || {}).filter(([, f]) => f.v && now() - (f.t || 0) > 6 * 3600e3).map(([u]) => u);
+    feeds.forEach((u) => fetchFeed(u).then((rows) => {
+      let res;
+      setState((s) => { res = applyFeed(s, u, rows.filter((r) => r.due >= iso(addDays(today(), -14))), { addNew: (r) => r.looksLikeWork, nextInk, uid }); return res.state; });
+      setTimeout(() => res && (res.added || res.moved) && say(`Calendar update: ${res.added ? plural(res.added, 'new date') : ''}${res.added && res.moved ? ', ' : ''}${res.moved ? plural(res.moved, 'date') + ' changed' : ''}.`), 0);
+    }, () => {}));
+  }, [session?.user?.id]);
+
   const trySample = () => {
     const newItems = parseSyllabus(sampleSyllabus(), {});
     addPlan({ course: { id: uid(), name: 'PSYC 201', color: INKS[0], sample: true }, newItems });
@@ -156,6 +177,7 @@ export default function App() {
             </button>
           ))}
           <button className="tab add" onClick={() => setSheet({})}>+ Add a syllabus</button>
+          <button className="tab add lms-tab" onClick={() => setLms(true)}>{Object.keys(state.feeds || {}).length ? '↻ LEARN / D2L connected' : '+ Connect LEARN / D2L'}</button>
         </nav>
         {!empty && (
           <div className="glance" aria-label="This week">
@@ -166,12 +188,14 @@ export default function App() {
         <div className="spine-foot">
           {!empty && <button className="link" onClick={exportIcs}>Export {filter ? courseById[filter]?.name : 'all courses'} to calendar</button>}
           <Account session={session} sync={sync} say={say} label={empty ? 'Already use StratAG? Sign in' : 'Sync to your phone'} />
+          <button className="link" onClick={() => setFb(true)}>Send feedback</button>
+          <a className="link" href="/privacy.html">Privacy</a>
         </div>
       </aside>
 
       <main className="page">
         {empty ? (
-          <Welcome onStart={() => setSheet({})} onSample={trySample} />
+          <Welcome onStart={() => setSheet({})} onSample={trySample} onLms={() => setLms(true)} />
         ) : (
           <>
             {sampleCourse && (
@@ -237,6 +261,8 @@ export default function App() {
           onDone={addPlan}
         />
       )}
+      {lms && <LmsSheet courses={courses} onClose={() => setLms(false)} onImport={importFeed} />}
+      {fb && <Feedback session={session} onClose={() => setFb(false)} say={say} />}
       {toast && (
         <div className="toast" role="status">
           <span>{toast.msg}</span>
@@ -247,7 +273,7 @@ export default function App() {
   );
 }
 
-function Welcome({ onStart, onSample }) {
+function Welcome({ onStart, onSample, onLms }) {
   return (
     <section className="welcome">
       <p className="kicker">Built for the January term · free</p>
@@ -257,6 +283,7 @@ function Welcome({ onStart, onSample }) {
         <button className="btn" onClick={onStart}>Add my first syllabus</button>
         <button className="btn ghost" onClick={onSample}>Show me with a sample</button>
       </div>
+      <p className="alt">On LEARN, MyLearningSpace or eConestoga? <button className="link" onClick={onLms}>Connect your course calendar instead</button></p>
       <ol className="how">
         <li><b>1</b> Drop a syllabus</li>
         <li><b>2</b> Fix anything we misread</li>
@@ -440,7 +467,7 @@ function Deadlines({ items, courses, isDone, upsert, remove, removeCourse, addTo
             <ul>
               {editing?.isNew && editing.courseId === c.id && <EditRow it={editing} save={(x) => { const { isNew, ...rest } = x; upsert(rest); setEditing(null); }} cancel={() => setEditing(null)} />}
               {list.map((i) => editing?.id === i.id ? (
-                <EditRow key={i.id} it={editing} save={(x) => { upsert(x); setEditing(null); }} cancel={() => setEditing(null)} remove={() => { remove(i.id); setEditing(null); }} />
+                <EditRow key={i.id} it={editing} save={(x) => { upsert({ ...x, edited: true }); setEditing(null); }} cancel={() => setEditing(null)} remove={() => { remove(i.id); setEditing(null); }} />
               ) : (
                 <li key={i.id} className={'dl' + (i.due && i.due < t ? ' gone' : '') + (!i.due ? ' tba' : '')}>
                   <span className="when">{i.due ? fmt(fromIso(i.due), { weekday: 'short', month: 'short', day: 'numeric' }) : 'Date TBA'}{i.time ? ' · ' + fmtTime(i.time) : ''}</span>
@@ -505,6 +532,7 @@ function ImportSheet({ course, usedInks, termStart: ts0, onClose, onDone }) {
   const [busy, setBusy] = useState(false);
   const [drag, setDrag] = useState(false);
   const [err, setErr] = useState('');
+  const [progress, setProgress] = useState('');
 
   useEffect(() => { const k = (e) => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k); }, []);
 
@@ -513,14 +541,20 @@ function ImportSheet({ course, usedInks, termStart: ts0, onClose, onDone }) {
     setBusy(true); setErr('');
     try {
       if (/pdf$/i.test(file.type) || /\.pdf$/i.test(file.name)) {
-        const { pdfToText } = await import('./lib/pdf.js');
-        const t = await pdfToText(file);
+        const { pdfToText, ocrPdf } = await import('./lib/pdf.js');
+        let t = await pdfToText(file);
+        if (t.trim().length < 40) { setErr(''); t = await ocrPdf(file, setProgress); setProgress(''); }
         if (t.trim().length < 40) throw new Error('scanned');
         setText(t);
         if (!name) setName(guessCourse(t) || guessCourse(file.name));
+      } else if (/^image\//.test(file.type)) {
+        setProgress('Reading your photo…');
+        const { makeOcr } = await import('./lib/pdf.js');
+        const w = await makeOcr(); const { data } = await w.recognize(file); await w.terminate();
+        setProgress(''); setText(data.text); if (!name) setName(guessCourse(data.text));
       } else { const t = await file.text(); setText(t); if (!name) setName(guessCourse(t)); }
     } catch (e) {
-      setErr(e.message === 'scanned' ? "That PDF looks like a scan (a picture of text), so there's nothing to read. Copy the grading table in by hand, or use the course's web version." : "Couldn't read that file. Try copying the text and pasting it instead.");
+      setErr(e.message === 'scanned' ? "We couldn't read any text in that PDF, even with photo reading. Try a clearer copy, or paste the grading table in by hand." : "Couldn't read that file. Try copying the text and pasting it instead.");
     }
     setBusy(false);
   };
@@ -560,8 +594,8 @@ function ImportSheet({ course, usedInks, termStart: ts0, onClose, onDone }) {
               onDrop={(e) => { e.preventDefault(); setDrag(false); readFile(e.dataTransfer.files[0]); }}>
               <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={'Paste the syllabus here, or drop the PDF on this box.\n\nThe grading table and the schedule are the parts that matter.'} />
               <div className="drop-bar">
-                <label className="btn ghost small file">{busy ? 'Reading…' : 'Choose a PDF'}<input type="file" accept=".pdf,.txt,application/pdf,text/plain" onChange={(e) => readFile(e.target.files[0])} hidden /></label>
-                <span className="note">Your file never leaves your device.</span>
+                <label className="btn ghost small file">{busy ? (progress || 'Reading…') : 'Choose a PDF or photo'}<input type="file" accept=".pdf,.txt,application/pdf,text/plain,image/*" onChange={(e) => readFile(e.target.files[0])} hidden /></label>
+                <span className="note">Your file never leaves your device. Scanned PDFs work too, they just take longer.</span>
               </div>
             </div>
             {err && <p className="err">{err}</p>}
@@ -614,7 +648,15 @@ function Account({ session, sync, say, label }) {
     return (
       <div className="acct">
         <p className="saved">{{ synced: 'Synced', syncing: 'Syncing…', error: "Couldn't sync, will retry", local: 'Saved' }[sync]} · {session.user.email}</p>
-        <button className="link" onClick={() => supabase.auth.signOut()}>Sign out</button>
+        <span className="row">
+          <button className="link" onClick={() => supabase.auth.signOut()}>Sign out</button>
+          <button className="link danger" onClick={async () => {
+            if (!window.confirm('Delete your synced plan from our servers and this device? This cannot be undone.')) return;
+            await supabase.from('plans').delete().eq('user_id', session.user.id);
+            try { localStorage.clear(); } catch {}
+            await supabase.auth.signOut(); location.reload();
+          }}>Delete my data</button>
+        </span>
       </div>
     );
   }
