@@ -7,7 +7,7 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config.js';
 const KEY = 'ikiloop.plan.v1';
 export const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-export const emptyState = () => ({ courses: [], items: [], done: {}, termStart: null, v: 1 });
+export const emptyState = () => ({ courses: [], items: [], done: {}, moves: {}, termStart: null, v: 1 });
 
 export function loadLocal() {
   try { return { ...emptyState(), ...JSON.parse(localStorage.getItem(KEY)) }; } catch { return emptyState(); }
@@ -34,6 +34,7 @@ export function merge(a, b) {
     courses: mergeList(a.courses, b.courses),
     items: mergeList(a.items, b.items),
     done: mergeDone(a.done, b.done),
+    moves: mergeDone(a.moves, b.moves),
     termStart: (a.termStartT || 0) >= (b.termStartT || 0) ? a.termStart : b.termStart,
     termStartT: Math.max(a.termStartT || 0, b.termStartT || 0),
   };

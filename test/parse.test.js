@@ -49,7 +49,13 @@ describe('stepsFor', () => {
   it('uses normal lead times when there is room', () => {
     const s = stepsFor({ id: 'b', title: 'Quiz', type: 'quiz', due: '2027-02-10' }, '2027-01-04');
     expect(s.map((x) => x.date)).toEqual(['2027-02-07', '2027-02-09', '2027-02-10']);
+    expect(s[0].id).toBe('b-quiz-0');
   });
+});
+
+it('small items get fewer steps and TBA items get none', () => {
+  expect(stepsFor({ id: 'c', title: 'Lab 2', type: 'paper', due: '2027-02-10', weight: 3 }, '2027-01-04').length).toBe(2);
+  expect(stepsFor({ id: 'd', title: 'Final', type: 'exam', due: null, weight: 40 }, '2027-01-04')).toEqual([]);
 });
 
 it('default term start is the first January Monday when planning in Nov', () => {
