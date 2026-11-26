@@ -1,4 +1,4 @@
-/* StrateG: a paper planner, not a dashboard.
+/* StratAG: a paper planner, not a dashboard.
    Washi paper, sumi ink, one ember accent. Mincho serif for the voice,
    a Japanese-drawn gothic for reading, mono for dates. */
 :root {
@@ -9,8 +9,8 @@
   --ink-2: #4A453E;
   --ash: #8C867C;
   --rule: #DDD5C6;
-  --ember: #E4572E;
-  --ember-ink: #B83F1C;
+  --ember: #FF6B1F;
+  --ember-ink: #C2470A;
   --moss: #4F7A3A;
   --f-voice: 'Shippori Mincho B1', 'Hiragino Mincho ProN', Georgia, serif;
   --f-read: 'Zen Kaku Gothic New', 'Hiragino Sans', system-ui, sans-serif;
@@ -20,12 +20,12 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --ink-2: #C3BBAC;
-    --ash: #8E877B; --rule: #36312A; --ember: #F06A3F; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
+    --ash: #8E877B; --rule: #36312A; --ember: #FF7A33; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
   --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --ink-2: #C3BBAC;
-  --ash: #8E877B; --rule: #36312A; --ember: #F06A3F; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
+  --ash: #8E877B; --rule: #36312A; --ember: #FF7A33; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -52,8 +52,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .page { padding: 36px clamp(16px, 5vw, 64px) 96px; max-width: 980px; width: 100%; }
 
 .brand { display: flex; align-items: center; gap: 10px; color: var(--sumi); text-decoration: none; }
+.brand .mark { width: 40px; height: 40px; border-radius: 10px; transform: rotate(-4deg); box-shadow: 2px 2px 0 var(--sumi); flex: none; }
 .brand .loop { width: 42px; color: var(--ember); flex: none; transform: rotate(-8deg); }
 .brand .name { font: 800 26px/1 var(--f-voice); letter-spacing: -.01em; display: grid; gap: 4px; }
+.brand .name em { font-style: normal; color: var(--ember); }
 .brand small { font: 500 11px/1 var(--f-read); color: var(--ash); letter-spacing: .04em; }
 
 /* course tabs read like notebook dividers */

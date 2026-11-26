@@ -1,4 +1,4 @@
-# StrateG · your study G
+# StratAG · your straight-A G
 
 Drop in a syllabus (PDF or pasted text). Every quiz, lab, essay and exam becomes small dated steps,
 a week-by-week plan, a grade tracker that says what you need on the rest, and an .ics file for

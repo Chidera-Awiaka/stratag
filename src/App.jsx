@@ -6,7 +6,7 @@ import { loadLocal, saveLocal, merge, pull, push, supabase } from './lib/store.j
 import { sampleSyllabus } from './sample.js';
 import { APP_NAME, MAKER, TAGLINE } from './config.js';
 
-const INKS = ['#E4572E', '#2F4A7A', '#5C7A3A', '#7A3B69', '#B9801A', '#2B7A78'];
+const INKS = ['#FF6B1F', '#2F4A7A', '#5C7A3A', '#7A3B69', '#B9801A', '#2B7A78'];
 const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const uid = () => Math.random().toString(36).slice(2, 10);
 const now = () => Date.now();
@@ -103,8 +103,8 @@ export default function App() {
     <div className="shell">
       <aside className="spine">
         <a className="brand" href="/" aria-label={APP_NAME + ' home'}>
-          <Loop />
-          <span className="name">{APP_NAME}<small>{TAGLINE} · by {MAKER}</small></span>
+          <img className="mark" src="/icon.svg" alt="" width="40" height="40" />
+          <span className="name"><span>{APP_NAME.split(/(A)/).map((p, i) => (p === "A" ? <em key={i}>A</em> : p))}</span><small>{TAGLINE} · by {MAKER}</small></span>
         </a>
         <nav className="tabs" aria-label="Courses">
           <button className={'tab' + (!filter ? ' on' : '')} onClick={() => setFilter(null)}>All courses</button>

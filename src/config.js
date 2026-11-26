@@ -4,6 +4,6 @@ export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 // Product name lives here only, so a rename is one line.
-export const APP_NAME = 'StrateG';
-export const TAGLINE = 'your study G';
+export const APP_NAME = 'StratAG';
+export const TAGLINE = 'your straight-A G';
 export const MAKER = 'Ikiloop';
