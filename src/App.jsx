@@ -4,7 +4,7 @@ import { iso, fromIso, addDays, today, daysBetween, mondayOf, fmt, fmtTime } fro
 import { buildIcs } from './lib/ics.js';
 import { loadLocal, saveLocal, merge, pull, push, supabase } from './lib/store.js';
 import { sampleSyllabus } from './sample.js';
-import { APP_NAME, MAKER, TAGLINE } from './config.js';
+import { APP_NAME, MAKER, TAGLINE, MAKER_URL } from './config.js';
 
 const INKS = ['#FF6B1F', '#2F4A7A', '#5C7A3A', '#7A3B69', '#B9801A', '#2B7A78'];
 const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -104,7 +104,7 @@ export default function App() {
       <aside className="spine">
         <a className="brand" href="/" aria-label={APP_NAME + ' home'}>
           <img className="mark" src="/icon.svg" alt="" width="40" height="40" />
-          <span className="name"><span>{APP_NAME.split(/(A)/).map((p, i) => (p === "A" ? <em key={i}>A</em> : p))}</span><small>{TAGLINE} · by {MAKER}</small></span>
+          <span className="name"><span>{APP_NAME.split(/(A)/).map((p, i) => (p === "A" ? <em key={i}>A</em> : p))}</span><small>{TAGLINE}</small></span>
         </a>
         <nav className="tabs" aria-label="Courses">
           <button className={'tab' + (!filter ? ' on' : '')} onClick={() => setFilter(null)}>All courses</button>
@@ -157,6 +157,10 @@ export default function App() {
             )}
           </>
         )}
+        <footer className="made">
+          {MAKER_URL ? <a href={MAKER_URL} target="_blank" rel="noopener"><Loop /> Made by <b>{MAKER}</b></a> : <span><Loop /> Made by <b>{MAKER}</b></span>}
+          <span className="sep">·</span><span>Make what matters. Keep looping.</span>
+        </footer>
       </main>
 
       {sheet && (

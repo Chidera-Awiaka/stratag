@@ -7,3 +7,5 @@ export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_p
 export const APP_NAME = 'StratAG';
 export const TAGLINE = 'your straight-A G';
 export const MAKER = 'Ikiloop';
+// Parent studio's public site. Empty until Ikiloop has a public URL (the footer shows plain text then).
+export const MAKER_URL = '';
