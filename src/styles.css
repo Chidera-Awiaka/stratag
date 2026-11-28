@@ -6,7 +6,7 @@
   --paper-2: #EAE3D6;
   --sheet: #FBF8F2;
   --sumi: #1C1915;
-  --c2: #4A453E;
+  --ink-2: #4A453E;
   --ash: #6F695F;
   --rule: #DDD5C6;
   --ember: #FF6B1F;
@@ -21,12 +21,12 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --c2: #C3BBAC;
+    --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --ink-2: #C3BBAC;
     --ash: #9A9386; --c0: #FF8A4C; --c1: #8FB0E8; --c2: #9CC07A; --c3: #D08BC0; --c4: #E0B45A; --c5: #6FC6C2; --rule: #36312A; --ember: #FF7A33; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --c2: #C3BBAC;
+  --paper: #171512; --paper-2: #1F1C18; --sheet: #1C1A16; --sumi: #EDE6D8; --ink-2: #C3BBAC;
   --ash: #9A9386; --c0: #FF8A4C; --c1: #8FB0E8; --c2: #9CC07A; --c3: #D08BC0; --c4: #E0B45A; --c5: #6FC6C2; --rule: #36312A; --ember: #FF7A33; --ember-ink: #F28A64; --moss: #8DBA6E; color-scheme: dark;
 }
 
@@ -392,3 +392,24 @@ input:focus, select:focus, textarea:focus { border-color: var(--sumi); outline: 
 .admin .tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 14px; }
 .admin .tools input[type=search] { flex: 1; min-width: 180px; padding: 9px 12px; border: 1.5px solid var(--field); border-radius: 8px; background: var(--sheet); color: var(--sumi); font: inherit; }
 @media (max-width: 560px) { .theme { grid-template-columns: 120px 1fr 36px; } }
+
+/* ---------- craft pass (scroll-craft taste floor) ----------
+   One easing curve, quiet browser surfaces, hover only where there is a mouse,
+   and one moment on the welcome page: the marker swipes under "every deadline". */
+:root { --ease: cubic-bezier(.23, 1, .32, 1); accent-color: var(--ember); scrollbar-color: var(--rule) transparent; }
+input, textarea { caret-color: var(--ember); }
+time, .week-head h2, .next .count, .tally b, .kicker { font-variant-numeric: tabular-nums; }
+.btn { transition: transform .12s var(--ease), box-shadow .12s var(--ease); }
+@media (hover: none) {
+  .btn:hover { transform: none; box-shadow: 3px 3px 0 var(--ember); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1.5px var(--sumi); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ember); }
+}
+.welcome > * { animation: craftrise .5s var(--ease) both; }
+.welcome > :nth-child(2) { animation-delay: .06s; }
+.welcome > :nth-child(3) { animation-delay: .12s; }
+.welcome > :nth-child(4) { animation-delay: .18s; }
+.welcome > :nth-child(n+5) { animation-delay: .24s; }
+.welcome .hl { background-repeat: no-repeat; background-size: 100% 100%; animation: marker .75s var(--ease) .45s both; }
+@keyframes craftrise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes marker { from { background-size: 0% 100%; } }
